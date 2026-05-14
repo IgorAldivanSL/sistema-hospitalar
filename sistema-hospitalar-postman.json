@@ -1,0 +1,79 @@
+{
+  "info": {
+    "name": "Sistema Hospitalar API",
+    "description": "Coleção de testes para a API do Sistema Hospitalar (com API Key: my-secret-api-key-12345)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Pacientes",
+      "item": [
+        {
+          "name": "Listar Pacientes",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-API-Key", "value": "my-secret-api-key-12345" }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/v1/pacientes",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "v1", "pacientes"]
+            }
+          }
+        },
+        {
+          "name": "Criar Paciente",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-API-Key", "value": "my-secret-api-key-12345" },
+              { "key": "X-Idempotency-Key", "value": "paciente-1" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nome\": \"João Silva\",\n    \"cpf\": \"12345678909\",\n    \"dataNascimento\": \"1990-01-01\",\n    \"email\": \"joao@email.com\",\n    \"telefone\": \"11999999999\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/v1/pacientes",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "v1", "pacientes"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Medicos",
+      "item": [
+        {
+          "name": "Criar Medico",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-API-Key", "value": "my-secret-api-key-12345" },
+              { "key": "X-Idempotency-Key", "value": "medico-1" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nome\": \"Dr. House\",\n    \"crm\": \"12345-SP\",\n    \"email\": \"house@hospital.com\",\n    \"telefone\": \"11888888888\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/v1/medicos",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "v1", "medicos"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

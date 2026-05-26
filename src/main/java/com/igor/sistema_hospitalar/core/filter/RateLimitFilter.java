@@ -25,6 +25,13 @@ public class RateLimitFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+        String path = request.getRequestURI();
+        // Ignora rotas de documentação e health check do Swagger para não estourar o limite no Render
+        if (path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String ip = request.getRemoteAddr();
         Bucket bucket = cache.computeIfAbsent(ip, this::createNewBucket);
 

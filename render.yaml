@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: api-sistema-hospitalar
+    env: docker
+    region: ohio
+    plan: free
+    healthCheckPath: /swagger-ui/index.html
+    envVars:
+      - key: PORT
+        value: 8080

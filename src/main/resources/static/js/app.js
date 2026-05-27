@@ -173,7 +173,12 @@ function renderTable(data) {
         items.forEach(item => {
             let row = `<tr>`;
             conf.columns.forEach(col => {
-                row += `<td>${item[col] !== undefined && item[col] !== null ? item[col] : '-'}</td>`;
+                let cellVal = item[col] !== undefined && item[col] !== null ? item[col] : '-';
+                if (col === 'keyValue' && cellVal !== '-') {
+                    row += `<td><span style="font-family: monospace; color: #34d399;">${cellVal}</span> <button class="btn-icon" style="padding: 0.2rem 0.4rem; font-size: 0.8rem; margin-left: 8px;" onclick="copyToClipboard('${cellVal}')" title="Copiar Chave"><i class="fas fa-copy"></i></button></td>`;
+                } else {
+                    row += `<td>${cellVal}</td>`;
+                }
             });
             row += `
                 <td class="action-cell">
@@ -350,4 +355,12 @@ function showLoading(show) {
     const loader = document.getElementById('loadingIndicator');
     if (show) loader.classList.remove('hidden');
     else loader.classList.add('hidden');
+}
+
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        showToast('Chave copiada com sucesso!', 'success');
+    }).catch(err => {
+        showToast('Não foi possível copiar a chave', 'error');
+    });
 }

@@ -24,7 +24,7 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
         
         // Ignorar swagger, rotas abertas e o frontend nativo
         String path = request.getRequestURI();
-        if (path.equals("/") || path.equals("/index.html") || path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs") || path.startsWith("/h2-console") || path.startsWith("/api/v1/auth/keys")) {
+        if (path.equals("/") || path.equals("/index.html") || path.startsWith("/css/") || path.startsWith("/js/") || path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs") || path.startsWith("/h2-console") || path.startsWith("/api/v1/auth/keys")) {
             filterChain.doFilter(request, response);
             return;
         }

@@ -310,13 +310,20 @@ function viewDetails(item) {
 async function handleApiError(response) {
     let msg = `Erro HTTP ${response.status}`;
     try {
-        const errJson = await response.json();
-        if (errJson.message) msg = errJson.message;
-        else if (errJson.details) msg = errJson.details.join(', ');
-        else msg = JSON.stringify(errJson);
-    } catch(e) {
         const text = await response.text();
-        if (text) msg = text;
+        if (text) {
+            try {
+                const errJson = JSON.parse(text);
+                if (errJson.message) msg = errJson.message;
+                else if (errJson.details) msg = errJson.details.join(', ');
+                else msg = JSON.stringify(errJson);
+            } catch(e) {
+                // Se não conseguir fazer o parse, significa que é texto puro (ex: 401 Unauthorized)
+                msg = text;
+            }
+        }
+    } catch(e) {
+        // Fallback em caso de erro extremo na leitura
     }
     throw new Error(msg);
 }

@@ -35,7 +35,7 @@ const CONFIG = {
     consultas: {
         title: 'Consultas',
         endpoint: '/api/v1/consultas',
-        columns: ['id', 'dataHora', 'status'],
+        columns: ['id', 'pacienteNome', 'medicoNome', 'dataHora', 'status'],
         schema: [
             { name: 'pacienteId', type: 'number', label: 'ID do Paciente', required: true },
             { name: 'medicoId', type: 'number', label: 'ID do Médico', required: true },
@@ -46,7 +46,7 @@ const CONFIG = {
     prontuarios: {
         title: 'Prontuários',
         endpoint: '/api/v1/prontuarios',
-        columns: ['id', 'pacienteId', 'tipoSanguineo'],
+        columns: ['id', 'pacienteNome', 'tipoSanguineo'],
         schema: [
             { name: 'pacienteId', type: 'number', label: 'ID do Paciente', required: true },
             { name: 'historico', type: 'textarea', label: 'Histórico Médico', required: true },
@@ -57,7 +57,7 @@ const CONFIG = {
     apikeys: {
         title: 'API Keys',
         endpoint: '/api/v1/auth/keys',
-        columns: ['id', 'cliente', 'key'],
+        columns: ['id', 'cliente', 'keyValue', 'ativo'],
         schema: [
             { name: 'cliente', type: 'text', label: 'Nome do Cliente / Aplicação', required: true }
         ]

@@ -22,9 +22,9 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         
-        // Ignorar swagger e rotas abertas
+        // Ignorar swagger, rotas abertas e o frontend nativo
         String path = request.getRequestURI();
-        if (path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs") || path.startsWith("/h2-console") || path.startsWith("/api/v1/auth/keys")) {
+        if (path.equals("/") || path.equals("/index.html") || path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs") || path.startsWith("/h2-console") || path.startsWith("/api/v1/auth/keys")) {
             filterChain.doFilter(request, response);
             return;
         }

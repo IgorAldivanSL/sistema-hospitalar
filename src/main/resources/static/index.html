@@ -3,224 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Sistema Hospitalar</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #0f172a;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --primary: #3b82f6;
-            --primary-hover: #2563eb;
-            --glass-bg: rgba(30, 41, 59, 0.7);
-            --glass-border: rgba(255, 255, 255, 0.1);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Outfit', sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        /* Animated Background Gradients */
-        .bg-glow {
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(15,23,42,0) 70%);
-            top: -200px;
-            left: -200px;
-            border-radius: 50%;
-            z-index: -1;
-            animation: pulse 8s infinite alternate;
-        }
-
-        .bg-glow-2 {
-            position: absolute;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(16,185,129,0.1) 0%, rgba(15,23,42,0) 70%);
-            bottom: -100px;
-            right: -100px;
-            border-radius: 50%;
-            z-index: -1;
-            animation: pulse 10s infinite alternate-reverse;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 0.8; }
-            100% { transform: scale(1.2); opacity: 1; }
-        }
-
-        /* Header */
-        header {
-            padding: 2rem 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--glass-border);
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(12px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
-            letter-spacing: 1px;
-            background: linear-gradient(to right, #60a5fa, #34d399);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* Hero Section */
-        .hero {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 5rem 5%;
-            animation: fadeInUp 1s ease-out;
-        }
-
-        .hero h1 {
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            color: var(--text-muted);
-            max-width: 600px;
-            margin-bottom: 3rem;
-            line-height: 1.6;
-        }
-
-        /* Glassmorphism Buttons */
-        .btn-primary {
-            display: inline-block;
-            padding: 1rem 2.5rem;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #fff;
-            background: var(--primary);
-            border-radius: 50px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-hover);
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(59, 130, 246, 0.6);
-        }
-
-        /* Features / Cards */
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            padding: 4rem 10%;
-            background: rgba(0,0,0,0.2);
-        }
-
-        .card {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(16px);
-            padding: 2rem;
-            border-radius: 16px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            text-align: center;
-        }
-
-        .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            border-color: rgba(255,255,255,0.2);
-        }
-
-        .card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: #fff;
-        }
-
-        .card p {
-            color: var(--text-muted);
-            line-height: 1.5;
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 2rem;
-            color: var(--text-muted);
-            border-top: 1px solid var(--glass-border);
-            font-size: 0.9rem;
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
+    <title>Dashboard - API Sistema Hospitalar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
+<body class="dark-theme">
     <div class="bg-glow"></div>
     <div class="bg-glow-2"></div>
 
-    <header>
-        <div class="logo">HealthSync API</div>
-        <a href="/swagger-ui/index.html" style="color: var(--text-muted); text-decoration: none; font-weight: 600; transition: color 0.3s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">Documentação</a>
-    </header>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-hospital-symbol"></i> HealthSync
+            </div>
+            <nav class="nav-menu" id="navMenu">
+                <button class="nav-item active" data-entity="pacientes"><i class="fas fa-users"></i> Pacientes</button>
+                <button class="nav-item" data-entity="medicos"><i class="fas fa-user-md"></i> Médicos</button>
+                <button class="nav-item" data-entity="especialidades"><i class="fas fa-stethoscope"></i> Especialidades</button>
+                <button class="nav-item" data-entity="consultas"><i class="fas fa-calendar-check"></i> Consultas</button>
+                <button class="nav-item" data-entity="prontuarios"><i class="fas fa-notes-medical"></i> Prontuários</button>
+                <button class="nav-item" data-entity="apikeys"><i class="fas fa-key"></i> API Keys</button>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="/swagger-ui/index.html" class="swagger-link"><i class="fas fa-book"></i> Swagger Docs</a>
+            </div>
+        </aside>
 
-    <section class="hero">
-        <h1>O Motor do Sistema Hospitalar Moderno</h1>
-        <p>Uma API RESTful robusta, com nível de produção, equipada com relacionamentos complexos, paginação, HATEOAS, Idempotência e validações estritas.</p>
-        <a href="/swagger-ui/index.html" class="btn-primary">Acessar Documentação Swagger</a>
-    </section>
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Global Config Header -->
+            <header class="top-header">
+                <div class="header-title">
+                    <h2 id="pageTitle">Pacientes</h2>
+                </div>
+                <div class="global-config">
+                    <div class="input-group">
+                        <label title="Header: X-API-Key"><i class="fas fa-lock"></i> API Key</label>
+                        <input type="password" id="globalApiKey" placeholder="Sua API Key">
+                    </div>
+                    <div class="input-group">
+                        <label title="Header: X-Idempotency-Key"><i class="fas fa-shield-alt"></i> Idempotency Key</label>
+                        <input type="text" id="globalIdempotency" placeholder="Chave Única (POST)">
+                    </div>
+                    <div class="input-group">
+                        <label title="Header: X-API-Version"><i class="fas fa-code-branch"></i> Version</label>
+                        <select id="globalVersion">
+                            <option value="1">V1</option>
+                            <option value="2">V2</option>
+                        </select>
+                    </div>
+                </div>
+            </header>
 
-    <section class="features">
-        <div class="card">
-            <h3>Pacientes</h3>
-            <p>Gerenciamento completo de pacientes com versionamento de API e controle estruturado.</p>
-        </div>
-        <div class="card">
-            <h3>Médicos</h3>
-            <p>Controle de profissionais médicos, vinculação com especialidades e consultas.</p>
-        </div>
-        <div class="card">
-            <h3>Consultas</h3>
-            <p>Agendamento e histórico com Rate Limiting e chaves de idempotência anti-fraude.</p>
-        </div>
-        <div class="card">
-            <h3>Prontuários</h3>
-            <p>Módulo de acesso restrito aos históricos, blindado por chaves de API (API Key).</p>
-        </div>
-    </section>
+            <!-- Data Panel -->
+            <div class="data-panel">
+                <div class="panel-header">
+                    <div class="pagination-info">
+                        Exibindo página <span id="currentPage">0</span> - Total: <span id="totalItems">0</span> itens
+                    </div>
+                    <div class="actions">
+                        <button class="btn-icon" id="btnRefresh" title="Atualizar"><i class="fas fa-sync-alt"></i></button>
+                        <button class="btn-primary" id="btnNovo"><i class="fas fa-plus"></i> Novo Registro</button>
+                    </div>
+                </div>
 
-    <footer>
-        <p>Projeto Avaliativo - Sistema Hospitalar RESTful © 2026. Desenvolvido com Spring Boot.</p>
-    </footer>
+                <div class="table-container">
+                    <table id="dataTable">
+                        <thead>
+                            <tr id="tableHeader">
+                                <!-- Generated Dynamically -->
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <!-- Generated Dynamically -->
+                        </tbody>
+                    </table>
+                    <div id="loadingIndicator" class="loading-overlay hidden">
+                        <div class="spinner"></div>
+                    </div>
+                    <div id="emptyState" class="empty-state hidden">
+                        <i class="fas fa-folder-open"></i>
+                        <p>Nenhum registro encontrado.</p>
+                    </div>
+                </div>
+
+                <div class="pagination-controls">
+                    <button id="btnPrev" class="btn-page" disabled><i class="fas fa-chevron-left"></i> Anterior</button>
+                    <select id="pageSize" class="page-size-select">
+                        <option value="5">5 por página</option>
+                        <option value="10" selected>10 por página</option>
+                        <option value="20">20 por página</option>
+                    </select>
+                    <button id="btnNext" class="btn-page" disabled>Próxima <i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Dynamic Modal -->
+    <div id="formModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Nova Entrada</h3>
+                <button class="btn-close" id="btnCloseModal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="dynamicForm">
+                    <!-- Generated Dynamically -->
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="btnCancelModal">Cancelar</button>
+                <button class="btn-primary" id="btnSaveModal"><i class="fas fa-save"></i> Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Details Modal -->
+    <div id="detailsModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Detalhes do Registro</h3>
+                <button class="btn-close" id="btnCloseDetails"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" id="detailsContent">
+                <!-- JSON Pre or Details -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="/js/app.js"></script>
 </body>
 </html>

@@ -3,7 +3,7 @@ package com.igor.sistema_hospitalar.domain.service;
 import com.igor.sistema_hospitalar.api.dto.request.PacienteRequest;
 import com.igor.sistema_hospitalar.api.dto.response.PacienteResponse;
 import com.igor.sistema_hospitalar.domain.entity.Paciente;
-import com.igor.sistema_hospitalar.domain.exception.BusinessException;
+import com.igor.sistema_hospitalar.domain.exception.ResourceConflictException;
 import com.igor.sistema_hospitalar.domain.exception.ResourceNotFoundException;
 import com.igor.sistema_hospitalar.domain.repository.PacienteRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class PacienteService {
     @Transactional
     public PacienteResponse create(PacienteRequest request) {
         if (pacienteRepository.findByCpf(request.getCpf()).isPresent()) {
-            throw new BusinessException("CPF já cadastrado");
+            throw new ResourceConflictException("CPF já cadastrado");
         }
         Paciente paciente = new Paciente();
         updateEntity(paciente, request);

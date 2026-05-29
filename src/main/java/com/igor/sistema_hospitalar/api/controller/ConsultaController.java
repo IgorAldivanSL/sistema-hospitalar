@@ -44,7 +44,11 @@ public class ConsultaController {
     public ResponseEntity<ConsultaResponse> create(@RequestBody @Valid ConsultaRequest request) {
         ConsultaResponse response = consultaService.create(request);
         addLinks(response);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        java.net.URI location = org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(response.getId())
+                .toUri();
+        return ResponseEntity.created(location).body(response);
     }
 
     @PutMapping("/{id}")

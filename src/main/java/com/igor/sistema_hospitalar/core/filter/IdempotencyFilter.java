@@ -1,25 +1,31 @@
 package com.igor.sistema_hospitalar.core.filter;
 
 import com.igor.sistema_hospitalar.domain.entity.IdempotencyRecord;
+import com.igor.sistema_hospitalar.domain.exception.BusinessException;
 import com.igor.sistema_hospitalar.domain.service.IdempotencyService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import java.io.IOException;
 import java.util.Optional;
 
 @Component
-@RequiredArgsConstructor
 public class IdempotencyFilter extends OncePerRequestFilter {
 
     private final IdempotencyService idempotencyService;
+    private final HandlerExceptionResolver resolver;
+
+    public IdempotencyFilter(IdempotencyService idempotencyService, @Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
+        this.idempotencyService = idempotencyService;
+        this.resolver = resolver;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -48,9 +54,7 @@ public class IdempotencyFilter extends OncePerRequestFilter {
             IdempotencyRecord existingRecord = existingRecordOpt.get();
 
             if (!existingRecord.getRequestHash().equals(requestHash)) {
-                response.setStatus(HttpStatus.UNPROCESSABLE_ENTITY.value());
-                response.setContentType("application/json;charset=UTF-8");
-                response.getWriter().write("{\"status\":422,\"message\":\"Chave de idempotência já utilizada com um payload diferente.\"}");
+                resolver.resolveException(request, response, null, new BusinessException("Chave de idempotência já utilizada com um payload diferente."));
                 return;
             }
 

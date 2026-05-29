@@ -2,6 +2,7 @@ package com.igor.sistema_hospitalar.api.controller;
 
 import com.igor.sistema_hospitalar.api.dto.request.PacienteRequest;
 import com.igor.sistema_hospitalar.api.dto.response.PacienteResponse;
+import com.igor.sistema_hospitalar.api.dto.response.PacienteResponseV2;
 import com.igor.sistema_hospitalar.domain.service.PacienteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +23,15 @@ import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping("/api/v1/pacientes")
+@RequestMapping("/api/pacientes")
 @RequiredArgsConstructor
 @Validated
 @Tag(name = "Pacientes", description = "Endpoints para gerenciamento de pacientes")
@@ -35,7 +39,7 @@ public class PacienteController {
 
     private final PacienteService pacienteService;
 
-    @PostMapping
+    @PostMapping(headers = "X-API-Version=1")
     @Operation(summary = "Criar novo paciente", description = "Cria um novo registro de paciente no sistema.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Paciente criado com sucesso"),
@@ -44,10 +48,14 @@ public class PacienteController {
     public ResponseEntity<PacienteResponse> create(@RequestBody @Valid PacienteRequest request) {
         PacienteResponse response = pacienteService.create(request);
         addLinks(response);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(response.getId())
+                .toUri();
+        return ResponseEntity.created(location).body(response);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", headers = "X-API-Version=1")
     @Operation(summary = "Atualizar paciente", description = "Atualiza os dados de um paciente existente pelo seu ID.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Paciente atualizado com sucesso"),
@@ -59,7 +67,7 @@ public class PacienteController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", headers = "X-API-Version=1")
     @Operation(summary = "Buscar paciente por ID", description = "Retorna um paciente especifico baseado no seu ID.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Paciente encontrado"),
@@ -86,20 +94,20 @@ public class PacienteController {
     }
 
     @GetMapping(headers = "X-API-Version=2")
-    @Operation(summary = "Listar todos os pacientes (V2)", description = "Retorna uma lista paginada de todos os pacientes com status 206.")
-    @ApiResponse(responseCode = "206", description = "Lista de pacientes retornada parcialmente")
+    @Operation(summary = "Listar todos os pacientes (V2)", description = "Retorna uma lista paginada de todos os pacientes simplificada com status 206.")
+    @ApiResponse(responseCode = "206", description = "Lista de pacientes resumida retornada parcialmente")
     @Parameters({
             @Parameter(name = "page", description = "Número da página (começa em 0)", example = "0"),
             @Parameter(name = "size", description = "Quantidade de itens por página", example = "10"),
             @Parameter(name = "sort", description = "Ordenação no formato campo,direção", example = "id,asc")
     })
-    public ResponseEntity<PagedModel<EntityModel<PacienteResponse>>> findAllV2(@ParameterObject Pageable pageable, PagedResourcesAssembler<PacienteResponse> assembler) {
-        Page<PacienteResponse> responses = pacienteService.findAll(pageable);
-        responses.forEach(this::addLinks);
+    public ResponseEntity<PagedModel<EntityModel<PacienteResponseV2>>> findAllV2(@ParameterObject Pageable pageable, PagedResourcesAssembler<PacienteResponseV2> assembler) {
+        Page<PacienteResponseV2> responses = pacienteService.findAllV2(pageable);
+        responses.forEach(this::addLinksV2);
         return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(assembler.toModel(responses));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(value = "/{id}", headers = "X-API-Version=1")
     @Operation(summary = "Excluir paciente", description = "Remove um paciente do sistema pelo ID.")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Paciente removido com sucesso"),
@@ -110,7 +118,7 @@ public class PacienteController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/cpf/{cpf}")
+    @GetMapping(value = "/cpf/{cpf}", headers = "X-API-Version=1")
     @Operation(summary = "Buscar paciente por CPF", description = "Retorna um paciente especifico baseado no seu CPF.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Paciente encontrado"),
@@ -125,5 +133,9 @@ public class PacienteController {
     private void addLinks(PacienteResponse response) {
         response.add(linkTo(methodOn(PacienteController.class).findById(response.getId())).withSelfRel());
         response.add(linkTo(methodOn(PacienteController.class).findAll(Pageable.unpaged(), null)).withRel("pacientes"));
+    }
+
+    private void addLinksV2(PacienteResponseV2 response) {
+        response.add(linkTo(methodOn(PacienteController.class).findById(response.getId())).withSelfRel());
     }
 }

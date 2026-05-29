@@ -2,6 +2,7 @@ package com.igor.sistema_hospitalar.domain.service;
 
 import com.igor.sistema_hospitalar.api.dto.request.PacienteRequest;
 import com.igor.sistema_hospitalar.api.dto.response.PacienteResponse;
+import com.igor.sistema_hospitalar.api.dto.response.PacienteResponseV2;
 import com.igor.sistema_hospitalar.domain.entity.Paciente;
 import com.igor.sistema_hospitalar.domain.exception.ResourceConflictException;
 import com.igor.sistema_hospitalar.domain.exception.ResourceNotFoundException;
@@ -12,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class PacienteService {
@@ -20,9 +23,7 @@ public class PacienteService {
 
     @Transactional
     public PacienteResponse create(PacienteRequest request) {
-        if (pacienteRepository.findByCpf(request.getCpf()).isPresent()) {
-            throw new ResourceConflictException("CPF já cadastrado");
-        }
+        checkDuplication(null, request.getCpf(), request.getEmail());
         Paciente paciente = new Paciente();
         updateEntity(paciente, request);
         paciente = pacienteRepository.save(paciente);
@@ -33,6 +34,7 @@ public class PacienteService {
     public PacienteResponse update(Long id, PacienteRequest request) {
         Paciente paciente = pacienteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado com id: " + id));
+        checkDuplication(id, request.getCpf(), request.getEmail());
         updateEntity(paciente, request);
         paciente = pacienteRepository.save(paciente);
         return toResponse(paciente);
@@ -50,6 +52,11 @@ public class PacienteService {
         return pacienteRepository.findAll(pageable).map(this::toResponse);
     }
 
+    @Transactional(readOnly = true)
+    public Page<PacienteResponseV2> findAllV2(Pageable pageable) {
+        return pacienteRepository.findAll(pageable).map(this::toResponseV2);
+    }
+
     @Transactional
     public void delete(Long id) {
         if (!pacienteRepository.existsById(id)) {
@@ -63,6 +70,17 @@ public class PacienteService {
         return pacienteRepository.findByCpf(cpf)
                 .map(this::toResponse)
                 .orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado com CPF: " + cpf));
+    }
+
+    private void checkDuplication(Long id, String cpf, String email) {
+        Optional<Paciente> byCpf = pacienteRepository.findByCpf(cpf);
+        if (byCpf.isPresent() && !byCpf.get().getId().equals(id)) {
+            throw new ResourceConflictException("CPF já cadastrado");
+        }
+        Optional<Paciente> byEmail = pacienteRepository.findByEmail(email);
+        if (byEmail.isPresent() && !byEmail.get().getId().equals(id)) {
+            throw new ResourceConflictException("Email já cadastrado");
+        }
     }
 
     private void updateEntity(Paciente paciente, PacienteRequest request) {
@@ -81,6 +99,14 @@ public class PacienteService {
                 .dataNascimento(paciente.getDataNascimento())
                 .email(paciente.getEmail())
                 .telefone(paciente.getTelefone())
+                .build();
+    }
+
+    public PacienteResponseV2 toResponseV2(Paciente paciente) {
+        return PacienteResponseV2.builder()
+                .id(paciente.getId())
+                .nome(paciente.getNome())
+                .email(paciente.getEmail())
                 .build();
     }
 }

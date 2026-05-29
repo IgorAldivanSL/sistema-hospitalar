@@ -44,7 +44,11 @@ public class EspecialidadeController {
     public ResponseEntity<EspecialidadeResponse> create(@RequestBody @Valid EspecialidadeRequest request) {
         EspecialidadeResponse response = especialidadeService.create(request);
         addLinks(response);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        java.net.URI location = org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(response.getId())
+                .toUri();
+        return ResponseEntity.created(location).body(response);
     }
 
     @PutMapping("/{id}")

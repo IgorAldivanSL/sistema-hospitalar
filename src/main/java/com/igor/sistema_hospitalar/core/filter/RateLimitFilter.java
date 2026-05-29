@@ -7,9 +7,11 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.HttpStatus;
+import com.igor.sistema_hospitalar.domain.exception.TooManyRequestsException;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -20,6 +22,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RateLimitFilter extends OncePerRequestFilter {
 
     private final Map<String, Bucket> cache = new ConcurrentHashMap<>();
+    private final HandlerExceptionResolver resolver;
+
+    public RateLimitFilter(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
+        this.resolver = resolver;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -32,15 +39,20 @@ public class RateLimitFilter extends OncePerRequestFilter {
             return;
         }
 
-        String ip = request.getRemoteAddr();
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        } else {
+            ip = ip.split(",")[0].trim();
+        }
+
         Bucket bucket = cache.computeIfAbsent(ip, this::createNewBucket);
 
         if (bucket.tryConsume(1)) {
             filterChain.doFilter(request, response);
         } else {
-            response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
             response.setHeader("Retry-After", "60");
-            response.getWriter().write("Too Many Requests. Limite de taxa excedido.");
+            resolver.resolveException(request, response, null, new TooManyRequestsException("Too Many Requests. Limite de taxa excedido."));
         }
     }
 

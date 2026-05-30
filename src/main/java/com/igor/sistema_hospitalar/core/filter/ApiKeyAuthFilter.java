@@ -28,6 +28,12 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         
+        // Ignorar preflight de CORS
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // Ignorar swagger, rotas abertas e o frontend nativo
         String path = request.getRequestURI();
         if (path.equals("/") || path.equals("/index.html") || path.startsWith("/css/") || path.startsWith("/js/") || path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs") || path.startsWith("/h2-console") || path.startsWith("/api/v1/auth/keys") || path.startsWith("/api/auth/keys")) {

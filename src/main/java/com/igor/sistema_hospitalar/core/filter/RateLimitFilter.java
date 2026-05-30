@@ -32,6 +32,11 @@ public class RateLimitFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String path = request.getRequestURI();
         // Ignora rotas de documentação e health check do Swagger para não estourar o limite no Render
         if (path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")) {
